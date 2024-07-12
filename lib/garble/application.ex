@@ -8,7 +8,7 @@ defmodule Garble.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      Garble.Repo,
+      Garble.Repo
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

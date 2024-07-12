@@ -45,12 +45,13 @@ defmodule Garble do
         ["-loglevel", "quiet"],
         ["-c:a", "libmp3lame"],
         ["-q:a", "0"],
-        ["-threads", "1"],
+        ["-threads", "1"]
       ]
       |> List.flatten()
       |> Enum.join(" ")
 
-    cmd = ~s[ffmpeg -i "#{clip_path}" #{codec2_args} - | ffmpeg #{pipe_format} -i - #{mp3_args} -y "./priv/output/#{basename}"]
+    cmd =
+      ~s[ffmpeg -i "#{clip_path}" #{codec2_args} - | ffmpeg #{pipe_format} -i - #{mp3_args} -y "./priv/output/#{basename}"]
 
     System.shell(cmd)
   end
@@ -77,7 +78,8 @@ defmodule Garble do
             {[{List.to_string(name), type}], dir_ref}
         end
       end,
-      fn _ -> :ok end # not used because :dirent cleans up on GC
+      # not used because :dirent cleans up on GC
+      fn _ -> :ok end
     )
   end
 end
