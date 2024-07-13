@@ -4,5 +4,6 @@ defmodule Garble.Commonvoice do
   schema "commonvoice" do
     field(:path, :string)
     field(:converted, :boolean)
+    field(:failed, :boolean)
   end
 end

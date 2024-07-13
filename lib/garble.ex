@@ -11,16 +11,18 @@ defmodule Garble do
     case compress(path) do
       :ok ->
         Garble.Repo.update_all(
-          from(c in Garble.Commonvoice, where: id == ^id), set: [converted: true]
+          from(c in Garble.Commonvoice, where: c.id == ^id), set: [converted: true]
         )
 
       {:error, _} ->
-        Logger.warn("#{id} #{Path.basename(path)} failed to convert.")
+        Garble.Repo.update_all(
+          from(c in Garble.Commonvoice, where: c.id == ^id), set: [failed: true]
+        )
+        Logger.warning("#{id} #{path} failed to convert.")
     end
   end
 
-  @spec compress(binary()) :: :ok | {:error, any()}
-  def compress(clip_path) when is_binary(clip_path) do
+  def compress(clip_path, log_level \\ "quiet") when is_binary(clip_path) do
     basename = Path.basename(clip_path)
 
     pipe_format = "-f codec2"
@@ -28,7 +30,7 @@ defmodule Garble do
     codec2_args =
       [
         "-vn",
-        ["-loglevel", "quiet"],
+        ["-loglevel", log_level],
         "-c:a",
         "libcodec2",
         ["-mode", "3200"],
@@ -40,7 +42,7 @@ defmodule Garble do
 
     mp3_args =
       [
-        ["-loglevel", "quiet"],
+        ["-loglevel", log_level],
         ["-c:a", "libmp3lame"],
         ["-q:a", "0"],
         ["-threads", "1"]
@@ -49,7 +51,7 @@ defmodule Garble do
       |> Enum.join(" ")
 
     cmd =
-      ~s[ffmpeg -i "#{clip_path}" #{codec2_args} - | ffmpeg #{pipe_format} -i - #{mp3_args} -y "./priv/output/#{basename}"]
+      ~s[ffmpeg -f mp3 -i "#{clip_path}" #{codec2_args} - | ffmpeg #{pipe_format} -i - #{mp3_args} -y "./priv/output/#{basename}"]
 
     case System.shell(cmd) do
       {_, 0} -> :ok
@@ -97,7 +99,6 @@ defmodule Garble do
 
   def paths_stream() do
     Stream.resource(&init/0, &next/1, &finally/1)
-    |> Stream.take(100)
   end
 
   defp init, do: 0
@@ -106,7 +107,7 @@ defmodule Garble do
     query =
       from(
         c in Garble.Commonvoice,
-        where: c.id > ^counter and c.converted == false,
+        where: c.id > ^counter and c.converted == false and c.failed == false,
         select: {c.id, c.path},
         limit: 1000
       )

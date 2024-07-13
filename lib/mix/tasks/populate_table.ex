@@ -7,8 +7,6 @@ defmodule Mix.Tasks.PopulateTable do
   def run(_) do
     Mix.Task.run("app.start")
 
-    Logger.configure(level: :warn)
-
     "priv/commonvoice/clips"
     |> Garble.ls_stream()
     |> Stream.chunk_every(1000)

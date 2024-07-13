@@ -1,8 +1,6 @@
 defmodule Mix.Tasks.Garble do
   use Mix.Task
 
-  import Ecto.Query
-
   require Logger
 
   @threads :erlang.system_info(:logical_processors_available)
@@ -15,6 +13,7 @@ defmodule Mix.Tasks.Garble do
     Garble.paths_stream()
     |> Flow.from_enumerable()
     |> Flow.partition(stages: @threads)
+    |> Flow.map(&Garble.compress_and_log/1)
     |> Flow.run()
   end
 end
