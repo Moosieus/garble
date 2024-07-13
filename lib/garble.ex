@@ -101,13 +101,20 @@ defmodule Garble do
     Stream.resource(&init/0, &next/1, &finally/1)
   end
 
-  defp init, do: 0
+  def init() do
+    from(
+      c in Garble.Commonvoice,
+      where: c.converted == false and c.failed == false,
+      select: min(c.id)
+    ) |> Garble.Repo.one!()
+  end
 
   defp next(counter) do
     query =
       from(
         c in Garble.Commonvoice,
         where: c.id > ^counter and c.converted == false and c.failed == false,
+        order_by: [asc: c.id],
         select: {c.id, c.path},
         limit: 1000
       )
