@@ -23,7 +23,7 @@ defmodule Garble.MixProject do
   defp deps do
     [
       {:flow, "~> 1.0"},
-      {:dirent, git: "https://github.com/team-telnyx/erlang-dirent.git", branch: "master"},
+      {:dirent, git: "https://github.com/moosieus/erlang-dirent.git", branch: "otp-26-fix"},
       {:ecto_sql, "~> 3.0"},
       {:ecto_sqlite3, "~> 0.16"}
     ]

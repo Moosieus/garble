@@ -1,21 +1,10 @@
 # Garble
 
-**TODO: Add description**
+Made to run commonvoice data through codec2 via ffmpeg. Requries the following:
+* ffmpeg
+* libcodec2
+* sqlite3
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `garble` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:garble, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/garble>.
-
+## Commands
+* `mix populate_table` must run first, and will generate entries in the database to track the progress of converting each file.
+* `mix garble` iterates over the database and converts all the files via ffmpeg.
