@@ -27,3 +27,8 @@ garble-*.tar
 
 # Commonvoice data
 /priv/commonvoice
+/priv/output
+
+/garble_repo.db
+/garble_repo.db-shm
+/garble_repo.db-wal
