@@ -10,10 +10,10 @@ defmodule Mix.Tasks.Garble do
 
     Logger.configure(level: :warn)
 
-    Garble.paths_stream()
+    Garble.DB.entries_stream()
     |> Flow.from_enumerable()
     |> Flow.partition(stages: @threads)
-    |> Flow.map(&Garble.compress_and_log/1)
+    |> Flow.map(&Garble.compress_with_progress/1)
     |> Flow.run()
   end
 end

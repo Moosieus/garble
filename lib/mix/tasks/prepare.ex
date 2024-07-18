@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.PopulateTable do
+defmodule Mix.Tasks.Prepare do
   @moduledoc "Walk the commonvoice folder and populate the sqlite database."
   use Mix.Task
 
@@ -8,7 +8,7 @@ defmodule Mix.Tasks.PopulateTable do
     Mix.Task.run("app.start")
 
     "priv/commonvoice/clips"
-    |> Garble.ls_stream()
+    |> Garble.Files.recursive_stream()
     |> Stream.chunk_every(1000)
     |> Stream.map(&insert/1)
     |> Stream.run()
