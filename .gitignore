@@ -28,6 +28,7 @@ garble-*.tar
 # Commonvoice data
 /priv/commonvoice
 /priv/output
+/priv/audio
 
 # Sqlite database
 /garble_repo.db

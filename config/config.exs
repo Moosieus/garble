@@ -7,4 +7,5 @@ config :garble, Garble.Repo,
   hostname: "localhost",
   database: "garble_repo.db",
   username: "user",
-  password: "pass"
+  password: "pass",
+  log: false

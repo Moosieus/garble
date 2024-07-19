@@ -42,7 +42,6 @@ defmodule Garble.Files do
           _ ->
             {[], dir_refs}
         end
-
     end
   end
 

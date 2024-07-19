@@ -10,8 +10,9 @@ defmodule Garble do
   @doc """
   Runs the file at `path` through codec2 and logs progress in the db with `id`.
   """
-  def compress_with_progress({id, path}) when is_integer(id) and is_binary(path) do
-    case compress(path) do
+  def compress_with_progress({id, path}, relative_path)
+      when is_integer(id) and is_binary(path) and is_binary(relative_path) do
+    case compress(path, relative_path) do
       :ok ->
         Garble.Repo.update_all(
           from(c in Garble.Commonvoice, where: c.id == ^id),
@@ -28,8 +29,13 @@ defmodule Garble do
     end
   end
 
-  def compress(clip_path, log_level \\ "quiet") when is_binary(clip_path) do
-    basename = Path.basename(clip_path)
+  # need to mirror the former folder structure somewhere, and save the files as such.
+
+  def compress(clip_path, relative_path, log_level \\ "quiet") when is_binary(clip_path) do
+    save_path =
+      clip_path
+      |> (&Path.relative_to(&1, relative_path)).()
+      |> (&Path.join("./priv", &1)).()
 
     pipe_format = "-f codec2"
 
@@ -56,8 +62,12 @@ defmodule Garble do
       |> List.flatten()
       |> Enum.join(" ")
 
+    save_path
+    |> Path.dirname()
+    |> File.mkdir_p!()
+
     cmd =
-      ~s[ffmpeg -f mp3 -i "#{clip_path}" #{codec2_args} - | ffmpeg #{pipe_format} -i - #{mp3_args} -y "./priv/output/#{basename}"]
+      ~s[ffmpeg -f mp3 -i "#{clip_path}" #{codec2_args} - | ffmpeg #{pipe_format} -i - #{mp3_args} -y "#{save_path}"]
 
     case System.shell(cmd) do
       {_, 0} -> :ok
