@@ -3,6 +3,7 @@ Made to run commonvoice data through codec2 via ffmpeg. Requries the following:
 * ffmpeg
 * libcodec2
 * sqlite3
+* libmp3lame
 
 ## Usage
 1. Generate entries in the database to track the progress of converting each file:
